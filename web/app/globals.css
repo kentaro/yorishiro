@@ -442,6 +442,85 @@ button {
 }
 
 /* ------------------------------------------------------------------ */
+/* How page                                                            */
+/* ------------------------------------------------------------------ */
+
+.how {
+  max-width: 72ch;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) 96px;
+}
+
+.how-back {
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.how-back:hover {
+  color: var(--accent);
+}
+
+.how h1 {
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin: var(--space-4) 0 var(--space-3);
+}
+
+.how h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--phosphor);
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+.how h3 {
+  font-size: 14px;
+  color: var(--accent);
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+.how p,
+.how-lede {
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: var(--dim);
+  margin: 0 0 var(--space-3);
+}
+
+.how p code {
+  color: var(--ink);
+  font-size: 12.5px;
+}
+
+.how a {
+  color: var(--accent);
+}
+
+.how-code {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink);
+  overflow-x: auto;
+  margin: 0 0 var(--space-3);
+}
+
+.colophon a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.colophon a:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ */
 /* Responsive                                                          */
 /* ------------------------------------------------------------------ */
 

@@ -11,6 +11,7 @@ export type ExampleCategory =
   | "scheme"
   | "supervision"
   | "midi"
+  | "songs"
   | "chaos";
 
 export interface Example {
@@ -26,6 +27,7 @@ export const CATEGORY_LABELS: Readonly<Record<ExampleCategory, string>> = {
   scheme: "Scheme, live",
   supervision: "Init duties, by hand",
   midi: "MIDI out — /dev/ttyS1",
+  songs: "Songbook",
   chaos: "Chaos engineering",
 };
 
@@ -90,7 +92,7 @@ export const EXAMPLES: readonly Example[] = [
     title: "Read the machine's soul",
     blurb: "PID 1 is a text file. Print the init program you are talking to.",
     code:
-      '(call-with-input-file "/sbin/yorishiro-init"\n' +
+      '(call-with-input-file "/sbin/yorishiro-init.scm"\n' +
       "  (lambda (p) (dotimes (i 12) (print (read-line p)))))",
   },
   {
@@ -277,6 +279,56 @@ export const EXAMPLES: readonly Example[] = [
       "(begin (midi-bytes #x90 60 100) (rest-ms 500) (midi-bytes #x80 60 0))",
   },
 
+  // --- Songs (public-domain melodies) --------------------------------------
+  {
+    id: "star-spangled-banner",
+    category: "songs",
+    title: "The Star-Spangled Banner",
+    blurb: "The opening strain, played by PID 1 through its serial jack.",
+    code:
+      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
+      "  '((67 300) (64 300) (60 700) (64 700) (67 700) (72 1300)\n" +
+      "    (76 300) (74 300) (72 700) (64 700) (66 700) (67 1300)\n" +
+      "    (67 300) (67 300) (76 700) (74 300) (72 300) (71 1300)\n" +
+      "    (69 300) (71 300) (72 700) (72 300) (67 300) (64 700) (60 900)))",
+  },
+  {
+    id: "amazing-grace",
+    category: "songs",
+    title: "Amazing Grace",
+    blurb: "One verse of the hymn, as a list of (note ms) pairs.",
+    code:
+      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
+      "  '((62 400) (67 800) (71 400) (69 400) (67 800) (64 400) (62 800)\n" +
+      "    (62 400) (67 800) (71 400) (69 400) (71 800) (74 1200)\n" +
+      "    (74 400) (74 800) (71 400) (74 400) (71 400) (67 800) (62 800)\n" +
+      "    (64 400) (67 800) (71 400) (69 400) (67 1600)))",
+  },
+  {
+    id: "kojo-no-tsuki",
+    category: "songs",
+    title: "Kōjō no Tsuki (荒城の月)",
+    blurb: "Rentarō Taki, 1901 — a ruined castle, moonlight, and a Wasm CPU.",
+    code:
+      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
+      "  '((64 400) (64 400) (69 400) (71 400) (72 600) (71 200) (69 800)\n" +
+      "    (66 400) (66 400) (71 400) (69 400) (67 400) (66 400) (64 1200)\n" +
+      "    (64 400) (64 400) (69 400) (71 400) (72 600) (71 200) (69 800)\n" +
+      "    (66 400) (66 400) (71 400) (69 400) (67 400) (66 400) (64 1200)))",
+  },
+  {
+    id: "furusato",
+    category: "songs",
+    title: "Furusato (故郷)",
+    blurb: "\"Usagi oishi kano yama…\" — the 1914 school song, abridged.",
+    code:
+      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
+      "  '((60 400) (60 400) (60 400) (62 400) (64 400) (64 400) (62 400) (64 400)\n" +
+      "    (65 400) (64 400) (62 400) (60 400) (64 600) (62 200) (62 800)\n" +
+      "    (60 400) (60 400) (60 400) (62 400) (64 400) (64 400) (62 400) (64 400)\n" +
+      "    (65 400) (64 400) (62 400) (60 400) (64 600) (62 200) (60 800)))",
+  },
+
   // --- Chaos engineering ---------------------------------------------------
   {
     id: "fill-tmp",
@@ -292,9 +344,9 @@ export const EXAMPLES: readonly Example[] = [
   {
     id: "reboot",
     category: "chaos",
-    title: "Reboot the universe",
+    title: "End the universe",
     blurb:
-      "busybox reboot -f calls reboot(2). Watch your universe die and be reborn — reload the page.",
+      "reboot(2) — the emulated CPU does not survive it. The vessel dies; summon again to be reborn.",
     code: '(sys-system "reboot -f")',
   },
 ];

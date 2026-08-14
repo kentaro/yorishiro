@@ -78,11 +78,21 @@ export class V86Adapter implements EmulatorAdapter {
   private readonly progressListeners = new Set<
     (progress: DownloadProgress) => void
   >();
+  private readonly crashListeners = new Set<(reason: string) => void>();
+  private readonly windowErrorHandler = (event: ErrorEvent): void => {
+    const message = typeof event.message === "string" ? event.message : "";
+    if (/panicked|unreachable|RuntimeError/i.test(message)) {
+      for (const listener of this.crashListeners) {
+        listener("the emulated CPU halted and cannot continue");
+      }
+    }
+  };
 
   async start(image: MachineImage): Promise<void> {
     if (this.emulator !== null) {
       throw new Error("emulator already started");
     }
+    window.addEventListener("error", this.windowErrorHandler);
     const V86 = await loadV86Script();
     const emulator = new V86({
       wasm_path: V86_WASM_URL,
@@ -95,6 +105,8 @@ export class V86Adapter implements EmulatorAdapter {
       autostart: true,
       disable_keyboard: true,
       disable_mouse: true,
+      // COM2 is the machine's MIDI jack; v86 only wires it on request.
+      uart1: true,
     });
     emulator.add_listener("serial0-output-byte", (data: unknown) => {
       if (typeof data === "number") {
@@ -156,12 +168,21 @@ export class V86Adapter implements EmulatorAdapter {
     };
   }
 
+  onCrash(listener: (reason: string) => void): () => void {
+    this.crashListeners.add(listener);
+    return () => {
+      this.crashListeners.delete(listener);
+    };
+  }
+
   dispose(): void {
     const emulator = this.emulator;
     this.emulator = null;
+    window.removeEventListener("error", this.windowErrorHandler);
     this.serialListeners.clear();
     this.midiListeners.clear();
     this.progressListeners.clear();
+    this.crashListeners.clear();
     if (emulator !== null) {
       void emulator.destroy();
     }

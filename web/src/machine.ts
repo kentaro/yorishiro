@@ -25,6 +25,7 @@ export class Machine {
   private watchdog: ReturnType<typeof setTimeout> | null = null;
   private unsubscribeSerial: (() => void) | null = null;
   private unsubscribeProgress: (() => void) | null = null;
+  private unsubscribeCrash: (() => void) | null = null;
 
   constructor(
     private readonly adapter: EmulatorAdapter,
@@ -78,6 +79,9 @@ export class Machine {
         this.setState({ kind: "loading", progress });
       }
     });
+    this.unsubscribeCrash = this.adapter.onCrash((reason) => {
+      this.fail(reason);
+    });
 
     const decoder = new SerialDecoder();
     const watcher = new MarkerWatcher(this.options.readyMarker);
@@ -117,6 +121,10 @@ export class Machine {
     if (this.unsubscribeProgress !== null) {
       this.unsubscribeProgress();
       this.unsubscribeProgress = null;
+    }
+    if (this.unsubscribeCrash !== null) {
+      this.unsubscribeCrash();
+      this.unsubscribeCrash = null;
     }
     this.adapter.dispose();
     this.setState({ kind: "idle" });

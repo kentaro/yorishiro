@@ -63,6 +63,21 @@ class FakeAdapter implements EmulatorAdapter {
     };
   }
 
+  private crashListeners = new Set<(reason: string) => void>();
+
+  onCrash(listener: (reason: string) => void): () => void {
+    this.crashListeners.add(listener);
+    return () => {
+      this.crashListeners.delete(listener);
+    };
+  }
+
+  crash(reason: string): void {
+    for (const l of this.crashListeners) {
+      l(reason);
+    }
+  }
+
   dispose(): void {
     this.disposed = true;
   }
@@ -173,6 +188,19 @@ describe("Machine", () => {
     }
     await bootPromise;
     expect(machine.getState().kind).toBe("booting");
+  });
+
+  it("moves to failed when the emulator crashes, even after ready", async () => {
+    const adapter = new FakeAdapter();
+    const machine = new Machine(adapter, OPTS);
+    await machine.boot(IMAGE);
+    adapter.emit("yorishiro> ");
+    expect(machine.getState().kind).toBe("ready");
+    adapter.crash("the emulated CPU halted");
+    expect(machine.getState()).toEqual({
+      kind: "failed",
+      reason: "the emulated CPU halted",
+    });
   });
 
   it("dispose releases the adapter", async () => {

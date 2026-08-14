@@ -33,6 +33,12 @@ export interface EmulatorAdapter {
   onMidiByte(listener: (byte: number) => void): () => void;
   /** Subscribe to image download progress. Returns an unsubscribe function. */
   onDownloadProgress(listener: (progress: DownloadProgress) => void): () => void;
+  /**
+   * Subscribe to fatal emulator crashes (e.g. the guest executing an
+   * instruction the emulator cannot handle). Returns an unsubscribe
+   * function.
+   */
+  onCrash(listener: (reason: string) => void): () => void;
   /** Tear down the emulator and release resources. */
   dispose(): void;
 }

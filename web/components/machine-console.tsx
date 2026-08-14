@@ -11,6 +11,7 @@ import {
   type ExampleCategory,
 } from "../src/examples";
 import { MidiParser, MidiRouter } from "../src/midi";
+import { LineEditor } from "../src/line-editor";
 
 const IMAGE = {
   kernelUrl: "/machine/bzImage",
@@ -26,6 +27,7 @@ const CATEGORY_ORDER: readonly ExampleCategory[] = [
   "scheme",
   "supervision",
   "midi",
+  "songs",
   "chaos",
 ];
 
@@ -124,6 +126,7 @@ export function MachineConsole(): ReactNode {
   const termRef = useRef<HTMLDivElement | null>(null);
   const machineRef = useRef<Machine | null>(null);
   const focusRef = useRef<(() => void) | null>(null);
+  const runExampleRef = useRef<((code: string) => void) | null>(null);
   const [state, setState] = useState<MachineState>({ kind: "idle" });
   const [midiSink, setMidiSink] = useState("built-in synth");
 
@@ -187,9 +190,23 @@ export function MachineConsole(): ReactNode {
           terminal.focus();
         }
       });
+      const editor = new LineEditor();
       terminal.onData((data) => {
-        machine.sendInput(data);
+        const effect = editor.feed(data);
+        if (effect.echo.length > 0) {
+          terminal.write(effect.echo);
+        }
+        if (effect.submit !== null) {
+          machine.sendInput(effect.submit);
+        }
       });
+      runExampleRef.current = (code) => {
+        const effect = editor.paste(code);
+        terminal.write(effect.echo);
+        if (effect.submit !== null) {
+          machine.sendInput(effect.submit);
+        }
+      };
 
       const midiParser = new MidiParser();
       const midiRouter = new MidiRouter();
@@ -208,6 +225,7 @@ export function MachineConsole(): ReactNode {
         terminal.dispose();
         machineRef.current = null;
         focusRef.current = null;
+        runExampleRef.current = null;
       };
 
       await machine.boot(IMAGE);
@@ -261,7 +279,7 @@ export function MachineConsole(): ReactNode {
                     className="example"
                     disabled={!ready}
                     onClick={() => {
-                      machineRef.current?.sendInput(`${example.code}\n`);
+                      runExampleRef.current?.(example.code);
                       focusRef.current?.();
                     }}
                   >
@@ -287,6 +305,7 @@ export function MachineConsole(): ReactNode {
           <strong>why:</strong> if Nerves can make Linux speak Elixir, a page
           can make it speak Scheme
         </span>
+        <a href="/how">how it works ↗</a>
         <details className="statement">
           <summary>statement</summary>
           <div className="statement-body">

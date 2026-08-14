@@ -68,26 +68,59 @@ export interface MidiSink {
   send(message: MidiMessage): void;
 }
 
-/** A small triangle-wave polysynth so the machine is audible everywhere. */
+interface SynthVoice {
+  readonly oscillators: readonly OscillatorNode[];
+  readonly gain: GainNode;
+  readonly filter: BiquadFilterNode;
+}
+
+/**
+ * The built-in instrument: a dark analog-style polysynth — two detuned
+ * sawtooths plus a sub-oscillator through a resonant lowpass with an
+ * envelope sweep, into a feedback delay. Audible on any machine without a
+ * MIDI device, and worthy of the vessel.
+ */
 export class SynthSink implements MidiSink {
   readonly name = "built-in synth";
   private ctx: AudioContext | null = null;
-  private readonly voices = new Map<
-    number,
-    { osc: OscillatorNode; gain: GainNode }
-  >();
+  private bus: GainNode | null = null;
+  private readonly voices = new Map<number, SynthVoice>();
 
-  private context(): AudioContext | null {
+  private context(): { ctx: AudioContext; bus: GainNode } | null {
     if (this.ctx === null) {
       if (typeof AudioContext === "undefined") {
         return null;
       }
-      this.ctx = new AudioContext();
+      const ctx = new AudioContext();
+      const bus = ctx.createGain();
+      bus.gain.value = 0.9;
+
+      const compressor = ctx.createDynamicsCompressor();
+      compressor.threshold.value = -18;
+      compressor.ratio.value = 6;
+
+      const delay = ctx.createDelay(1);
+      delay.delayTime.value = 0.27;
+      const feedback = ctx.createGain();
+      feedback.gain.value = 0.32;
+      const wet = ctx.createGain();
+      wet.gain.value = 0.22;
+
+      bus.connect(compressor);
+      bus.connect(delay);
+      delay.connect(feedback);
+      feedback.connect(delay);
+      delay.connect(wet);
+      wet.connect(compressor);
+      compressor.connect(ctx.destination);
+
+      this.ctx = ctx;
+      this.bus = bus;
     }
     if (this.ctx.state === "suspended") {
       void this.ctx.resume();
     }
-    return this.ctx;
+    return this.bus === null ? null : { ctx: this.ctx, bus: this.bus };
   }
 
   send(message: MidiMessage): void {
@@ -100,23 +133,48 @@ export class SynthSink implements MidiSink {
   }
 
   private noteOn(note: number, velocity: number): void {
-    const ctx = this.context();
-    if (ctx === null) {
+    const audio = this.context();
+    if (audio === null) {
       return;
     }
     this.noteOff(note);
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "triangle";
-    osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
-    const peak = (velocity / 127) * 0.22;
+    const { ctx, bus } = audio;
     const now = ctx.currentTime;
+    const freq = 440 * Math.pow(2, (note - 69) / 12);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.Q.value = 5;
+    filter.frequency.setValueAtTime(Math.min(freq * 9, 9000), now);
+    filter.frequency.exponentialRampToValueAtTime(
+      Math.max(freq * 2.2, 300),
+      now + 0.28,
+    );
+
+    const gain = ctx.createGain();
+    const peak = (velocity / 127) * 0.16;
     gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(peak, now + 0.006);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    this.voices.set(note, { osc, gain });
+    gain.gain.linearRampToValueAtTime(peak, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(peak * 0.65, now + 0.25);
+
+    const detunes: readonly (readonly [OscillatorType, number, number])[] = [
+      ["sawtooth", 0, -7],
+      ["sawtooth", 0, 7],
+      ["sine", -12, 0],
+    ];
+    const oscillators = detunes.map(([type, semitones, cents]) => {
+      const osc = ctx.createOscillator();
+      osc.type = type;
+      osc.frequency.value = freq * Math.pow(2, semitones / 12);
+      osc.detune.value = cents;
+      osc.connect(filter);
+      osc.start(now);
+      return osc;
+    });
+
+    filter.connect(gain);
+    gain.connect(bus);
+    this.voices.set(note, { oscillators, gain, filter });
   }
 
   private noteOff(note: number): void {
@@ -129,8 +187,10 @@ export class SynthSink implements MidiSink {
     const now = ctx.currentTime;
     voice.gain.gain.cancelScheduledValues(now);
     voice.gain.gain.setValueAtTime(voice.gain.gain.value, now);
-    voice.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
-    voice.osc.stop(now + 0.3);
+    voice.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+    for (const osc of voice.oscillators) {
+      osc.stop(now + 0.45);
+    }
   }
 }
 
