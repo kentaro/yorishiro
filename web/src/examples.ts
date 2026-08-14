@@ -289,49 +289,54 @@ export const EXAMPLES: readonly Example[] = [
     id: "star-spangled-banner",
     category: "songs",
     title: "The Star-Spangled Banner",
-    blurb: "The opening strain, played by PID 1 through its serial jack.",
+    blurb:
+      "\"Oh say can you see...\" — the opening strain in B-flat, note pitches verified against score.",
     code:
-      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
-      "  '((67 300) (64 300) (60 700) (64 700) (67 700) (72 1300)\n" +
-      "    (76 300) (74 300) (72 700) (64 700) (66 700) (67 1300)\n" +
-      "    (67 300) (67 300) (76 700) (74 300) (72 300) (71 1300)\n" +
-      "    (69 300) (71 300) (72 700) (72 300) (67 300) (64 700) (60 900)))",
+      "(play-song\n" +
+      "  '((77 135) (74 45) (70 180) (74 180) (77 180) (82 360)\n" +
+      "    (86 135) (84 45) (82 180) (74 180) (76 180) (77 360)))",
   },
   {
     id: "amazing-grace",
     category: "songs",
     title: "Amazing Grace",
-    blurb: "One verse of the hymn, as a list of (note ms) pairs.",
+    blurb:
+      "\"...how sweet the sound\" — one line in C, ending on the leap up to high G.",
     code:
-      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
-      "  '((62 400) (67 800) (71 400) (69 400) (67 800) (64 400) (62 800)\n" +
-      "    (62 400) (67 800) (71 400) (69 400) (71 800) (74 1200)\n" +
-      "    (74 400) (74 800) (71 400) (74 400) (71 400) (67 800) (62 800)\n" +
-      "    (64 400) (67 800) (71 400) (69 400) (67 1600)))",
+      "(play-song\n" +
+      "  '((67 180) (72 360) (76 90) (72 90) (76 360) (74 180)\n" +
+      "    (72 360) (69 180) (67 360) (67 180) (72 360) (76 90)\n" +
+      "    (72 90) (76 360) (74 180) (79 360)))",
   },
   {
     id: "kojo-no-tsuki",
     category: "songs",
     title: "Kōjō no Tsuki (荒城の月)",
-    blurb: "Rentarō Taki, 1901 — a ruined castle, moonlight, and a Wasm CPU.",
+    blurb:
+      "Rentarō Taki, 1901 — a ruined castle and moonlight, in E minor, verified against the sung melody.",
     code:
-      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
-      "  '((64 400) (64 400) (69 400) (71 400) (72 600) (71 200) (69 800)\n" +
-      "    (66 400) (66 400) (71 400) (69 400) (67 400) (66 400) (64 1200)\n" +
-      "    (64 400) (64 400) (69 400) (71 400) (72 600) (71 200) (69 800)\n" +
-      "    (66 400) (66 400) (71 400) (69 400) (67 400) (66 400) (64 1200)))",
+      "(play-song\n" +
+      "  '((71 180) (71 180) (76 180) (78 180) (79 180) (78 180) (76 360)\n" +
+      "    (72 180) (72 180) (71 180) (69 180) (71 540)\n" +
+      "    (71 180) (71 180) (76 180) (78 180) (79 180) (78 180) (76 360)\n" +
+      "    (72 180) (69 180) (71 270) (71 90) (64 540)\n" +
+      "    (64 270) (67 90) (67 180) (66 180) (64 180) (72 180) (72 360)\n" +
+      "    (71 180) (69 180) (71 270) (72 90) (72 540)\n" +
+      "    (71 180) (71 180) (76 180) (78 180) (79 180) (78 180) (76 360)\n" +
+      "    (72 180) (69 180) (71 270) (71 90) (64 540)))",
   },
   {
     id: "furusato",
     category: "songs",
     title: "Furusato (故郷)",
-    blurb: "\"Usagi oishi kano yama…\" — the 1914 school song, abridged.",
+    blurb:
+      "\"Usagi oishi kano yama...\" — Okano's 1914 school song in C, verified against the score.",
     code:
-      "(for-each (lambda (p) (note-on (car p)) (rest-ms (cadr p)) (note-off (car p)))\n" +
-      "  '((60 400) (60 400) (60 400) (62 400) (64 400) (64 400) (62 400) (64 400)\n" +
-      "    (65 400) (64 400) (62 400) (60 400) (64 600) (62 200) (62 800)\n" +
-      "    (60 400) (60 400) (60 400) (62 400) (64 400) (64 400) (62 400) (64 400)\n" +
-      "    (65 400) (64 400) (62 400) (60 400) (64 600) (62 200) (60 800)))",
+      "(play-song\n" +
+      "  '((60 180) (60 180) (60 180) (62 270) (64 90) (62 180)\n" +
+      "    (64 180) (64 180) (65 180) (67 540)\n" +
+      "    (65 180) (67 180) (69 180) (64 270) (65 90) (64 180)\n" +
+      "    (62 180) (62 180) (59 180) (60 540)))",
   },
 
   // --- Party tricks --------------------------------------------------------
