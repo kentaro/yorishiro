@@ -1,0 +1,450 @@
+/* ------------------------------------------------------------------ */
+/* Design tokens                                                       */
+/* ------------------------------------------------------------------ */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #0a0a0f;
+  --panel: #10101a;
+  --panel-2: #14141f;
+  --ink: #e8e6df;
+  --dim: #908da0;
+  --faint: #565364;
+  --accent: #b18af8;
+  --accent-soft: rgba(177, 138, 248, 0.14);
+  --phosphor: #7de8a6;
+  --danger: #ff9d9d;
+  --border: #232332;
+  --border-strong: #32324a;
+
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+    monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --radius: 10px;
+  --radius-sm: 7px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(
+      1200px 800px at 70% -10%,
+      rgba(177, 138, 248, 0.07),
+      transparent 60%
+    ),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+button {
+  font: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* Shell                                                               */
+/* ------------------------------------------------------------------ */
+
+.shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.masthead {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background: rgba(10, 10, 15, 0.85);
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-transform: lowercase;
+  color: var(--ink);
+}
+
+.wordmark .kanji {
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+.tagline {
+  margin: 0;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.masthead .midi-chip {
+  margin-left: auto;
+}
+
+.masthead .midi-chip span {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Status badge                                                        */
+/* ------------------------------------------------------------------ */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--dim);
+  background: var(--panel);
+  white-space: nowrap;
+}
+
+.status .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+.status[data-kind="loading"] .dot,
+.status[data-kind="booting"] .dot {
+  background: var(--accent);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.status[data-kind="ready"] {
+  color: var(--phosphor);
+  border-color: rgba(125, 232, 166, 0.35);
+}
+
+.status[data-kind="ready"] .dot {
+  background: var(--phosphor);
+  box-shadow: 0 0 8px rgba(125, 232, 166, 0.8);
+}
+
+.status[data-kind="failed"] {
+  color: var(--danger);
+  border-color: rgba(255, 157, 157, 0.4);
+}
+
+.status[data-kind="failed"] .dot {
+  background: var(--danger);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Main layout                                                         */
+/* ------------------------------------------------------------------ */
+
+.deck {
+  flex: 1;
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  min-height: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Terminal stage                                                      */
+/* ------------------------------------------------------------------ */
+
+.stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: #0c0c13;
+  box-shadow:
+    inset 0 0 80px rgba(0, 0, 0, 0.55),
+    0 0 48px rgba(177, 138, 248, 0.06);
+  overflow: hidden;
+}
+
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.016) 0px,
+    rgba(255, 255, 255, 0.016) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.term {
+  position: absolute;
+  inset: var(--space-3);
+}
+
+/* Boot overlay */
+
+.veil {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  background: rgba(10, 10, 15, 0.72);
+  backdrop-filter: blur(2px);
+  text-align: center;
+  padding: var(--space-5);
+}
+
+.veil .sigil {
+  font-size: 88px;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 42px rgba(177, 138, 248, 0.55);
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.985);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.veil .veil-title {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.veil .veil-sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--dim);
+  max-width: 44ch;
+}
+
+.meter {
+  width: min(320px, 70%);
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--phosphor));
+  transition: width 0.2s ease;
+}
+
+.veil .retry {
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.veil .retry:hover {
+  border-color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Examples rail                                                       */
+/* ------------------------------------------------------------------ */
+
+.rail {
+  width: 340px;
+  flex: none;
+  overflow-y: auto;
+  padding-right: var(--space-1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.rail-hint {
+  margin: 0 0 var(--space-3);
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.rail h2 {
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--faint);
+}
+
+.rail h2:first-of-type {
+  margin-top: 0;
+}
+
+.example {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--panel);
+  color: inherit;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.example:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--panel-2);
+  transform: translateY(-1px);
+}
+
+.example:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.example:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.example-title {
+  display: block;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.example-blurb {
+  display: block;
+  font-size: 11.5px;
+  color: var(--dim);
+  margin-top: 2px;
+}
+
+.example-code {
+  display: block;
+  font-size: 11px;
+  color: var(--faint);
+  margin-top: var(--space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer                                                              */
+/* ------------------------------------------------------------------ */
+
+.colophon {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: baseline;
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.colophon strong {
+  color: var(--dim);
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 860px) {
+  .shell {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .deck {
+    flex-direction: column;
+    padding: var(--space-3);
+  }
+
+  .stage {
+    min-height: 60vh;
+  }
+
+  .rail {
+    width: auto;
+    max-height: none;
+  }
+
+  .masthead {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veil .sigil,
+  .status .dot {
+    animation: none;
+  }
+
+  .example {
+    transition: none;
+  }
+}

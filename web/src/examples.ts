@@ -1,0 +1,300 @@
+/**
+ * The example catalog: one-click Scheme programs that show off what it
+ * means to have a live Scheme REPL as PID 1 of a real Linux kernel.
+ *
+ * Every `code` string is sent to the guest REPL verbatim (plus a newline),
+ * so each entry must be a single complete s-expression sequence.
+ */
+
+export type ExampleCategory =
+  | "machine"
+  | "scheme"
+  | "supervision"
+  | "midi"
+  | "chaos";
+
+export interface Example {
+  readonly id: string;
+  readonly category: ExampleCategory;
+  readonly title: string;
+  readonly blurb: string;
+  readonly code: string;
+}
+
+export const CATEGORY_LABELS: Readonly<Record<ExampleCategory, string>> = {
+  machine: "You are the machine",
+  scheme: "Scheme, live",
+  supervision: "Init duties, by hand",
+  midi: "MIDI out — /dev/ttyS1",
+  chaos: "Chaos engineering",
+};
+
+export const EXAMPLES: readonly Example[] = [
+  // --- You are the machine -------------------------------------------------
+  {
+    id: "whoami",
+    category: "machine",
+    title: "Who am I?",
+    blurb: "PID 1. Not a shell under an OS — the OS's first process itself.",
+    code: "(sys-getpid)",
+  },
+  {
+    id: "alone",
+    category: "machine",
+    title: "How alone are you?",
+    blurb: "List every process on the machine. It is a short list.",
+    code: '(filter #/^\\d+$/ (sys-readdir "/proc"))',
+  },
+  {
+    id: "kernel",
+    category: "machine",
+    title: "Ask the kernel",
+    blurb: "Read /proc/version like any file — from Scheme.",
+    code: '(call-with-input-file "/proc/version" read-line)',
+  },
+  {
+    id: "uname",
+    category: "machine",
+    title: "uname, natively",
+    blurb: "The uname(2) syscall, bound as a Scheme procedure.",
+    code: "(sys-uname)",
+  },
+  {
+    id: "meminfo",
+    category: "machine",
+    title: "How much world is there?",
+    blurb: "First lines of /proc/meminfo — the RAM your browser granted.",
+    code:
+      '(with-input-from-file "/proc/meminfo"\n' +
+      "  (lambda () (dotimes (i 3) (print (read-line)))))",
+  },
+  {
+    id: "uptime",
+    category: "machine",
+    title: "Seconds since creation",
+    blurb: "This universe began when the page loaded.",
+    code: '(call-with-input-file "/proc/uptime" read-line)',
+  },
+  {
+    id: "entropy",
+    category: "machine",
+    title: "Dice from the kernel",
+    blurb: "Read bytes from /dev/urandom.",
+    code:
+      '(with-input-from-file "/dev/urandom"\n' +
+      "  (lambda () (list (read-byte) (read-byte) (read-byte))))",
+  },
+  {
+    id: "soul",
+    category: "machine",
+    title: "Read the machine's soul",
+    blurb: "PID 1 is a text file. Print the init program you are talking to.",
+    code:
+      '(call-with-input-file "/sbin/yorishiro-init"\n' +
+      "  (lambda (p) (dotimes (i 12) (print (read-line p)))))",
+  },
+  {
+    id: "spawn",
+    category: "machine",
+    title: "Spawn a child",
+    blurb: "fork+exec busybox. You are init; every process is your child.",
+    code: '(sys-system "uname -a")',
+  },
+  {
+    id: "df",
+    category: "machine",
+    title: "The filesystem",
+    blurb: "An immutable initramfs plus a tmpfs — Nerves-style.",
+    code: '(sys-system "ls -la /")',
+  },
+
+  // --- Scheme, live --------------------------------------------------------
+  {
+    id: "squares",
+    category: "scheme",
+    title: "First light",
+    blurb: "Map over a list. The obligatory hello.",
+    code: "(map (lambda (n) (* n n)) (iota 10))",
+  },
+  {
+    id: "million",
+    category: "scheme",
+    title: "A million loops, no stack",
+    blurb: "Proper tail calls: iterate a million times inside a browser tab.",
+    code: "(let loop ((i 0)) (if (< i 1000000) (loop (+ i 1)) i))",
+  },
+  {
+    id: "callcc",
+    category: "scheme",
+    title: "Escape through a continuation",
+    blurb: "call/cc aborts the addition and returns 42 directly.",
+    code: "(call/cc (lambda (k) (+ 1 (k 42))))",
+  },
+  {
+    id: "bigfact",
+    category: "scheme",
+    title: "100! exactly",
+    blurb: "Arbitrary-precision integers, no library needed.",
+    code: "(let fact ((n 100)) (if (zero? n) 1 (* n (fact (- n 1)))))",
+  },
+  {
+    id: "macro",
+    category: "scheme",
+    title: "Grow the language",
+    blurb: "Define a `swap!` macro, then use it. The language is soft clay.",
+    code:
+      "(begin\n" +
+      "  (define-syntax swap!\n" +
+      "    (syntax-rules ()\n" +
+      "      ((_ a b) (let ((tmp a)) (set! a b) (set! b tmp)))))\n" +
+      "  (define x 'kernel) (define y 'lisp)\n" +
+      "  (swap! x y)\n" +
+      "  (list x y))",
+  },
+  {
+    id: "prompt",
+    category: "scheme",
+    title: "Repaint the prompt",
+    blurb: "The prompt is just a variable in the running init. Change it.",
+    code: '(set! *prompt* "\\u03bb> ")',
+  },
+  {
+    id: "apropos",
+    category: "scheme",
+    title: "Every syscall binding",
+    blurb: "apropos over the live image: the machine documents itself.",
+    code: "(apropos 'sys-set)",
+  },
+  {
+    id: "persist",
+    category: "scheme",
+    title: "Write, then reread",
+    blurb: "S-expressions to disk (tmpfs) and back: data is code is data.",
+    code:
+      "(begin\n" +
+      '  (with-output-to-file "/tmp/soul.scm"\n' +
+      "    (lambda () (write '(hello from inside the vessel))))\n" +
+      '  (call-with-input-file "/tmp/soul.scm" read))',
+  },
+
+  // --- Init duties, by hand ------------------------------------------------
+  {
+    id: "mortal",
+    category: "supervision",
+    title: "A mortal child",
+    blurb:
+      "fork a child that dies at once. The SIGCHLD handler in init reaps it — no zombie remains.",
+    code:
+      "(let ((pid (sys-fork)))\n" +
+      "  (if (zero? pid)\n" +
+      "      (sys-exit 0)\n" +
+      '      (format #t "child ~a was born and reaped~%" pid)))',
+  },
+  {
+    id: "supervisor",
+    category: "supervision",
+    title: "OTP in ten lines",
+    blurb:
+      "A supervisor: run a worker, watch it die, restart it. Nerves' core idea, hand-rolled.",
+    code:
+      "(begin\n" +
+      "  (define (supervise worker restarts)\n" +
+      "    (dotimes (i restarts)\n" +
+      "      (let ((pid (sys-fork)))\n" +
+      "        (if (zero? pid)\n" +
+      "            (begin (worker i) (sys-exit 0))\n" +
+      "            (guard (e (else #f)) (sys-waitpid pid))))))\n" +
+      "  (supervise\n" +
+      '    (lambda (i) (format #t "worker #~a: crash! (and that is fine)~%" i))\n' +
+      "    3)\n" +
+      "  'all-restarts-done)",
+  },
+  {
+    id: "zombie-count",
+    category: "supervision",
+    title: "Zombie census",
+    blurb: "Prove the reaper works: count Z-state processes (expect zero).",
+    code:
+      "(length\n" +
+      "  (filter\n" +
+      "    (lambda (d)\n" +
+      "      (guard (e (else #f))\n" +
+      '        (and (#/^\\d+$/ d)\n' +
+      "             (string-scan\n" +
+      '               (call-with-input-file #"/proc/~|d|/stat" read-line)\n' +
+      '               " Z "))))\n' +
+      '    (sys-readdir "/proc")))',
+  },
+
+  // --- MIDI out ------------------------------------------------------------
+  {
+    id: "chime",
+    category: "midi",
+    title: "Startup chime",
+    blurb:
+      "The machine's second serial port is a MIDI jack. Arpeggiate a C major 7 through it.",
+    code: "(play '(60 64 67 71 72) 140)",
+  },
+  {
+    id: "chord",
+    category: "midi",
+    title: "Hold a chord",
+    blurb: "Three note-ons, a beat of silence, three note-offs.",
+    code:
+      "(begin\n" +
+      "  (for-each note-on '(60 64 67))\n" +
+      "  (rest-ms 900)\n" +
+      "  (for-each note-off '(60 64 67))\n" +
+      "  'rung)",
+  },
+  {
+    id: "scale-walk",
+    category: "midi",
+    title: "Map over a scale",
+    blurb: "The melody is a list; transpose it with map before playing.",
+    code: "(play (map (lambda (n) (+ n 12)) '(60 62 64 65 67 69 71 72)) 120)",
+  },
+  {
+    id: "kernel-composes",
+    category: "midi",
+    title: "The kernel composes",
+    blurb:
+      "Eight notes drawn from /dev/urandom: kernel entropy as a melody.",
+    code:
+      "(with-input-from-file \"/dev/urandom\"\n" +
+      "  (lambda ()\n" +
+      "    (play (map (lambda (_) (+ 48 (modulo (read-byte) 25)))\n" +
+      "               (iota 8))\n" +
+      "          170)))",
+  },
+  {
+    id: "raw-midi",
+    category: "midi",
+    title: "Speak raw MIDI",
+    blurb:
+      "No helpers: write the 1983 wire protocol byte by byte. 0x90 60 100 is note-on middle C.",
+    code:
+      "(begin (midi-bytes #x90 60 100) (rest-ms 500) (midi-bytes #x80 60 0))",
+  },
+
+  // --- Chaos engineering ---------------------------------------------------
+  {
+    id: "fill-tmp",
+    category: "chaos",
+    title: "Fill the writable world",
+    blurb: "Write 1000 files to tmpfs, then count them. Rootfs stays immutable.",
+    code:
+      "(begin\n" +
+      "  (dotimes (i 1000)\n" +
+      '    (with-output-to-file #"/tmp/grain-~|i|" (lambda () (display i))))\n' +
+      '  (length (sys-readdir "/tmp")))',
+  },
+  {
+    id: "reboot",
+    category: "chaos",
+    title: "Reboot the universe",
+    blurb:
+      "busybox reboot -f calls reboot(2). Watch your universe die and be reborn — reload the page.",
+    code: '(sys-system "reboot -f")',
+  },
+];

@@ -1,0 +1,14 @@
+# Merged on top of Buildroot's qemu_x86_defconfig by build.sh.
+
+# glibc toolchain: friendlier to Gauche than the default uclibc-ng.
+BR2_TOOLCHAIN_BUILDROOT_GLIBC=y
+
+# The machine itself.
+BR2_PACKAGE_GAUCHE=y
+BR2_ROOTFS_OVERLAY="/work/firmware/overlay"
+BR2_TARGET_GENERIC_HOSTNAME="yorishiro"
+BR2_TARGET_GENERIC_ISSUE="yorishiro"
+
+# Ship everything as one artifact: kernel with the rootfs built in.
+BR2_TARGET_ROOTFS_INITRAMFS=y
+# BR2_TARGET_ROOTFS_EXT2 is not set
