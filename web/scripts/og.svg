@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow" cx="72%" cy="8%" r="80%">
+      <stop offset="0%" stop-color="#b18af8" stop-opacity="0.16"/>
+      <stop offset="55%" stop-color="#b18af8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b18af8"/>
+      <stop offset="100%" stop-color="#7de8a6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#0a0a0f"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- scanline texture -->
+  <g opacity="0.5">
+    <rect width="1200" height="630" fill="url(#scan)"/>
+  </g>
+  <pattern id="scan" width="1" height="3" patternUnits="userSpaceOnUse">
+    <rect width="1" height="1" fill="#ffffff" opacity="0.015"/>
+  </pattern>
+
+  <!-- giant sigil, right -->
+  <text x="1010" y="380" font-family="'Hiragino Sans','Noto Sans CJK JP',sans-serif"
+        font-size="440" font-weight="700" fill="#b18af8" opacity="0.14"
+        text-anchor="middle">依</text>
+
+  <!-- wordmark -->
+  <text x="90" y="196" font-family="ui-monospace,'SF Mono',Menlo,monospace"
+        font-size="94" font-weight="700" letter-spacing="10" fill="#e8e6df">yorishiro</text>
+  <text x="96" y="252" font-family="'Hiragino Sans','Noto Sans CJK JP',sans-serif"
+        font-size="40" font-weight="600" letter-spacing="8" fill="#b18af8">依代</text>
+
+  <!-- tagline -->
+  <text x="98" y="322" font-family="ui-monospace,'SF Mono',Menlo,monospace"
+        font-size="34" fill="#908da0">a LISP machine in your browser</text>
+
+  <rect x="98" y="360" width="150" height="3" rx="1.5" fill="url(#rule)"/>
+
+  <!-- terminal snippet -->
+  <g font-family="ui-monospace,'SF Mono',Menlo,monospace" font-size="30">
+    <text x="98" y="428" fill="#7de8a6">yorishiro&gt;</text>
+    <text x="290" y="428" fill="#e8e6df">(sys-getpid)</text>
+    <text x="98" y="470" fill="#e8e6df">1</text>
+    <text x="98" y="512" fill="#7de8a6">yorishiro&gt;</text>
+    <text x="290" y="512" fill="#e8e6df">(play '(60 64 67 72) 140)</text>
+    <text x="98" y="554" fill="#565364">;; Gauche runs as PID 1 of a real Linux, in this tab</text>
+  </g>
+</svg>
