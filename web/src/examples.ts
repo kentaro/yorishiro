@@ -12,6 +12,8 @@ export type ExampleCategory =
   | "supervision"
   | "midi"
   | "songs"
+  | "tricks"
+  | "drawing"
   | "chaos";
 
 export interface Example {
@@ -28,6 +30,8 @@ export const CATEGORY_LABELS: Readonly<Record<ExampleCategory, string>> = {
   supervision: "Init duties, by hand",
   midi: "MIDI out — /dev/ttyS1",
   songs: "Songbook",
+  tricks: "Party tricks",
+  drawing: "Drawing — character graphics",
   chaos: "Chaos engineering",
 };
 
@@ -327,6 +331,130 @@ export const EXAMPLES: readonly Example[] = [
       "    (65 400) (64 400) (62 400) (60 400) (64 600) (62 200) (62 800)\n" +
       "    (60 400) (60 400) (60 400) (62 400) (64 400) (64 400) (62 400) (64 400)\n" +
       "    (65 400) (64 400) (62 400) (60 400) (64 600) (62 200) (60 800)))",
+  },
+
+  // --- Party tricks --------------------------------------------------------
+  {
+    id: "quine",
+    category: "tricks",
+    title: "A quine",
+    blurb: "A program that prints its own source. The machine contemplates itself.",
+    code:
+      "((lambda (s) (print s) (write s) (newline))\n" +
+      '  "((lambda (s) (print s) (write s) (newline))  ")',
+  },
+  {
+    id: "ackermann",
+    category: "tricks",
+    title: "Ackermann(2, 3)",
+    blurb: "The function that taught mathematics what \"grows fast\" means.",
+    code:
+      "(begin\n" +
+      "  (define (ack m n)\n" +
+      "    (cond ((zero? m) (+ n 1))\n" +
+      "          ((zero? n) (ack (- m 1) 1))\n" +
+      "          (else (ack (- m 1) (ack m (- n 1))))))\n" +
+      "  (ack 2 3))",
+  },
+  {
+    id: "primes",
+    category: "tricks",
+    title: "Primes to 100",
+    blurb: "Trial division, the honest way.",
+    code:
+      "(filter (lambda (n)\n" +
+      "          (and (> n 1)\n" +
+      "               (not (find (lambda (d) (zero? (modulo n d)))\n" +
+      "                          (iota (- n 2) 2)))))\n" +
+      "        (iota 100 1))",
+  },
+  {
+    id: "fizzbuzz",
+    category: "tricks",
+    title: "FizzBuzz, on a real kernel",
+    blurb: "The interview question, evaluated by PID 1 of an actual OS.",
+    code:
+      "(dotimes (i 20)\n" +
+      "  (let ((n (+ i 1)))\n" +
+      "    (print (cond ((zero? (modulo n 15)) \"FizzBuzz\")\n" +
+      "                 ((zero? (modulo n 3)) \"Fizz\")\n" +
+      "                 ((zero? (modulo n 5)) \"Buzz\")\n" +
+      "                 (else n)))))",
+  },
+  {
+    id: "collatz",
+    category: "tricks",
+    title: "The Collatz staircase",
+    blurb: "3n+1 from 27. Nobody knows why it always lands on 1.",
+    code:
+      "(let loop ((n 27) (steps '()))\n" +
+      "  (if (= n 1)\n" +
+      "      (reverse (cons 1 steps))\n" +
+      "      (loop (if (even? n) (quotient n 2) (+ (* 3 n) 1))\n" +
+      "            (cons n steps))))",
+  },
+  {
+    id: "pi-leibniz",
+    category: "tricks",
+    title: "Approximate π",
+    blurb: "The Leibniz series, 100000 terms of exact rationals.",
+    code:
+      "(exact->inexact\n" +
+      "  (* 4 (let loop ((k 0) (sum 0))\n" +
+      "         (if (= k 100000) sum\n" +
+      "             (loop (+ k 1)\n" +
+      "                   (+ sum (/ (expt -1 k) (+ (* 2 k) 1))))))))",
+  },
+
+  // --- Drawing -------------------------------------------------------------
+  {
+    id: "mandelbrot",
+    category: "drawing",
+    title: "The fractal shore",
+    blurb:
+      "The Mandelbrot set, computed by PID 1 and rendered in characters.",
+    code:
+      "(begin\n" +
+      "  (dotimes (y 22)\n" +
+      "    (dotimes (x 64)\n" +
+      "      (let ((cr (- (* x 0.046875) 2.2)) (ci (- (* y 0.1) 1.05)))\n" +
+      "        (let loop ((i 0) (zr 0.0) (zi 0.0))\n" +
+      "          (if (and (< i 32) (< (+ (* zr zr) (* zi zi)) 4.0))\n" +
+      "              (loop (+ i 1)\n" +
+      "                    (+ (- (* zr zr) (* zi zi)) cr)\n" +
+      "                    (+ (* 2.0 zr zi) ci))\n" +
+      "              (display (if (= i 32) #\\@\n" +
+      '                           (string-ref " .,:;=+*#%" (modulo i 10))))))))\n' +
+      "    (newline))\n" +
+      "  'the-shore-of-chaos)",
+  },
+  {
+    id: "sierpinski",
+    category: "drawing",
+    title: "Triangle of triangles",
+    blurb: "Pascal's triangle mod 2: one logand, infinite structure.",
+    code:
+      "(begin\n" +
+      "  (dotimes (y 16)\n" +
+      "    (display (make-string (- 16 y) #\\space))\n" +
+      "    (dotimes (x (+ y 1))\n" +
+      "      (display (if (zero? (logand x (- y x))) \"* \" \"  \")))\n" +
+      "    (newline))\n" +
+      "  'sierpinski)",
+  },
+  {
+    id: "lambda-wave",
+    category: "drawing",
+    title: "A wave of lambdas",
+    blurb: "sin(x), plotted in the only letter this machine believes in.",
+    code:
+      "(begin\n" +
+      "  (dotimes (i 24)\n" +
+      "    (print (string-append\n" +
+      "            (make-string\n" +
+      "             (round->exact (* 22 (+ 1.0 (sin (* i 0.5))))) #\\space)\n" +
+      '            "\\u03bb")))\n' +
+      "  'wave)",
   },
 
   // --- Chaos engineering ---------------------------------------------------

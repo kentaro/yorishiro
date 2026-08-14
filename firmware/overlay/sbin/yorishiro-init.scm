@@ -114,9 +114,15 @@
 
 (define (banner)
   (print)
-  (print "  y o r i s h i r o")
-  (print "  a vessel for Lisp — Gauche " (gauche-version) " as PID 1")
-  (print "  type (help) for ideas; this is Scheme all the way down.")
+  (print "                      _     _")
+  (print " _   _  ___  _ __(_)___| |__ (_)_ __ ___")
+  (print "| | | |/ _ \\| '__| / __| '_ \\| | '__/ _ \\")
+  (print "| |_| | (_) | |  | \\__ \\ | | | | | | (_) |")
+  (print " \\__, |\\___/|_|  |_|___/_| |_|_|_|  \\___/")
+  (print " |___/     yorishiro · 依代 · a vessel for Lisp")
+  (print)
+  (print "Gauche " (gauche-version) " is PID 1 on Linux. This is Scheme")
+  (print "all the way down. Type (help) for things to try.")
   (print))
 
 (define (repl-once)

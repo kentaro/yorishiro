@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import "@xterm/xterm/css/xterm.css";
 import { Machine } from "../src/machine";
 import { V86Adapter } from "../src/emulator/v86-adapter";
@@ -28,6 +29,8 @@ const CATEGORY_ORDER: readonly ExampleCategory[] = [
   "supervision",
   "midi",
   "songs",
+  "tricks",
+  "drawing",
   "chaos",
 ];
 
@@ -65,6 +68,14 @@ function StatusBadge({ state }: { state: MachineState }): ReactNode {
   );
 }
 
+const BANNER = String.raw`
+                      _     _
+ _   _  ___  _ __(_)___| |__ (_)_ __ ___
+| | | |/ _ \| '__| / __| '_ \| | '__/ _ \
+| |_| | (_) | |  | \__ \ | | | | | | (_) |
+ \__, |\___/|_|  |_|___/_| |_|_|_|  \___/
+ |___/        依代 · a vessel for Lisp`;
+
 function BootVeil({ state }: { state: MachineState }): ReactNode {
   if (state.kind === "ready" || state.kind === "booting") {
     return null;
@@ -78,12 +89,13 @@ function BootVeil({ state }: { state: MachineState }): ReactNode {
           (state.progress.loadedBytes / state.progress.totalBytes) * 100,
         )
       : null;
+  const failed = state.kind === "failed";
   return (
     <div className="veil">
-      <div className="sigil" aria-hidden>
-        依
-      </div>
-      {state.kind === "failed" ? (
+      <pre className="banner" data-failed={failed} aria-hidden>
+        {BANNER}
+      </pre>
+      {failed ? (
         <>
           <p className="veil-title">the spirit did not descend</p>
           <p className="veil-sub">{state.reason}</p>
@@ -104,17 +116,18 @@ function BootVeil({ state }: { state: MachineState }): ReactNode {
             downloading a complete Linux universe — kernel, userland and a
             Scheme interpreter destined to become PID 1
           </p>
-          {pct !== null ? (
-            <div
-              className="meter"
-              role="progressbar"
-              aria-valuenow={Math.round(pct)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <span style={{ width: `${String(pct)}%` }} />
-            </div>
-          ) : null}
+          <div
+            className="meter"
+            role="progressbar"
+            aria-valuenow={pct === null ? undefined : Math.round(pct)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <span
+              className={pct === null ? "indeterminate" : undefined}
+              style={pct === null ? undefined : { width: `${String(pct)}%` }}
+            />
+          </div>
         </>
       )}
     </div>
@@ -246,6 +259,9 @@ export function MachineConsole(): ReactNode {
           yorishiro <span className="kanji">依代</span>
         </h1>
         <p className="tagline">a LISP machine in your browser</p>
+        <Link className="nav-link" href="/how">
+          how it works ↗
+        </Link>
         <span className="status midi-chip" title="MIDI messages from /dev/ttyS1 play here">
           <span aria-hidden>♪</span> {midiSink}
         </span>
@@ -305,7 +321,6 @@ export function MachineConsole(): ReactNode {
           <strong>why:</strong> if Nerves can make Linux speak Elixir, a page
           can make it speak Scheme
         </span>
-        <a href="/how">how it works ↗</a>
         <details className="statement">
           <summary>statement</summary>
           <div className="statement-body">
