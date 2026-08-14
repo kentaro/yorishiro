@@ -72,7 +72,7 @@ export const EXAMPLES: readonly Example[] = [
     blurb: "First lines of /proc/meminfo — the RAM your browser granted.",
     code:
       '(with-input-from-file "/proc/meminfo"\n' +
-      "  (lambda () (dotimes (i 3) (print (read-line)))))",
+      "  (lambda () (dotimes (i 3 'meminfo) (print (read-line)))))",
   },
   {
     id: "uptime",
@@ -97,7 +97,7 @@ export const EXAMPLES: readonly Example[] = [
     blurb: "PID 1 is a text file. Print the init program you are talking to.",
     code:
       '(call-with-input-file "/sbin/yorishiro-init.scm"\n' +
-      "  (lambda (p) (dotimes (i 12) (print (read-line p)))))",
+      "  (lambda (p) (dotimes (i 12 'the-soul) (print (read-line p)))))",
   },
   {
     id: "spawn",
@@ -194,7 +194,8 @@ export const EXAMPLES: readonly Example[] = [
       "(let ((pid (sys-fork)))\n" +
       "  (if (zero? pid)\n" +
       "      (sys-exit 0)\n" +
-      '      (format #t "child ~a was born and reaped~%" pid)))',
+      '      (begin (format #t "child ~a was born and reaped~%" pid)\n' +
+      "             'reaped)))",
   },
   {
     id: "supervisor",
@@ -375,7 +376,7 @@ export const EXAMPLES: readonly Example[] = [
     title: "FizzBuzz, on a real kernel",
     blurb: "The interview question, evaluated by PID 1 of an actual OS.",
     code:
-      "(dotimes (i 20)\n" +
+      "(dotimes (i 20 'fizzbuzz)\n" +
       "  (let ((n (+ i 1)))\n" +
       "    (print (cond ((zero? (modulo n 15)) \"FizzBuzz\")\n" +
       "                 ((zero? (modulo n 3)) \"Fizz\")\n" +
@@ -398,13 +399,12 @@ export const EXAMPLES: readonly Example[] = [
     id: "pi-leibniz",
     category: "tricks",
     title: "Approximate π",
-    blurb: "The Leibniz series, 100000 terms of exact rationals.",
+    blurb: "The Leibniz series, 100000 terms summed in floating point.",
     code:
-      "(exact->inexact\n" +
-      "  (* 4 (let loop ((k 0) (sum 0))\n" +
-      "         (if (= k 100000) sum\n" +
-      "             (loop (+ k 1)\n" +
-      "                   (+ sum (/ (expt -1 k) (+ (* 2 k) 1))))))))",
+      "(* 4 (let loop ((k 0) (sum 0.0))\n" +
+      "       (if (= k 100000) sum\n" +
+      "           (loop (+ k 1)\n" +
+      "                 (+ sum (/ (if (even? k) 1.0 -1.0) (+ (* 2 k) 1)))))))",
   },
 
   // --- Drawing -------------------------------------------------------------
