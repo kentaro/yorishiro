@@ -65,6 +65,14 @@ export class Machine {
       throw new Error(`cannot boot from state ${this.state.kind}`);
     }
     this.setState({ kind: "loading", progress: null });
+    // The watchdog covers the whole journey: download, emulator start and
+    // guest boot. A 404 on the image or a wedged emulator must all land in
+    // a visible `failed` state, never an eternal spinner.
+    this.watchdog = setTimeout(() => {
+      this.fail(
+        `the machine did not come alive within ${String(this.options.bootTimeoutMs)}ms`,
+      );
+    }, this.options.bootTimeoutMs);
     this.unsubscribeProgress = this.adapter.onDownloadProgress((progress) => {
       if (this.state.kind === "loading") {
         this.setState({ kind: "loading", progress });
@@ -94,12 +102,10 @@ export class Machine {
       return;
     }
 
+    if (this.getState().kind !== "loading") {
+      return; // the watchdog (or a failure) got there first
+    }
     this.setState({ kind: "booting" });
-    this.watchdog = setTimeout(() => {
-      this.fail(
-        `REPL prompt did not appear within ${String(this.options.bootTimeoutMs)}ms`,
-      );
-    }, this.options.bootTimeoutMs);
   }
 
   dispose(): void {

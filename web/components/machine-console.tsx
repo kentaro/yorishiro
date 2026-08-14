@@ -287,6 +287,39 @@ export function MachineConsole(): ReactNode {
           <strong>why:</strong> if Nerves can make Linux speak Elixir, a page
           can make it speak Scheme
         </span>
+        <details className="statement">
+          <summary>statement</summary>
+          <div className="statement-body">
+            <p>
+              In Shinto practice, a <em>yorishiro</em> (依代) is an object
+              prepared so that a spirit may descend into it and dwell there.
+              This page prepares such a vessel: a complete, real Linux
+              machine — kernel, devices, filesystems — conjured inside a
+              browser tab. Then it invites a spirit in. The spirit is Lisp.
+            </p>
+            <p>
+              On every Unix machine a single process, PID 1, is the seat of
+              life: it is born first, adopts every orphan, and its death is
+              the death of the machine. Here that seat is held not by an
+              init daemon but by a Scheme interpreter. Whoever visits speaks
+              to the machine in parenthesized incantations, and each
+              expression is evaluated by the very process that keeps the
+              machine alive. Emulation, in this work, is not preservation —
+              it is a séance.
+            </p>
+            <p>
+              The machine&apos;s second serial port is a MIDI jack, as MIDI
+              has been a serial protocol since 1983. Kernel entropy can be
+              read as melody; scales are lists; the visitor may livecode the
+              machine into song, or write a single byte to
+              /proc/sysrq-trigger and watch their universe die and be
+              reborn. In 1958 Lisp was invented; in 1991 Linux; in 1999 the
+              Prix Ars Electronica gave Linux itself a Golden Nica. This
+              work lets the older spirit take the younger machine as its
+              vessel.
+            </p>
+          </div>
+        </details>
       </footer>
     </div>
   );

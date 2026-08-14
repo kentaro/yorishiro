@@ -408,6 +408,39 @@ button {
   font-weight: 400;
 }
 
+.colophon .statement {
+  flex-basis: 100%;
+}
+
+.colophon .statement summary {
+  cursor: pointer;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 10.5px;
+}
+
+.colophon .statement summary:hover {
+  text-decoration: underline;
+}
+
+.statement-body {
+  max-width: 68ch;
+  padding: var(--space-3) 0 var(--space-2);
+}
+
+.statement-body p {
+  margin: 0 0 var(--space-3);
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: var(--dim);
+}
+
+.statement-body em {
+  color: var(--ink);
+  font-style: normal;
+}
+
 /* ------------------------------------------------------------------ */
 /* Responsive                                                          */
 /* ------------------------------------------------------------------ */
