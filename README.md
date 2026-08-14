@@ -1,6 +1,6 @@
 # yorishiro
 
-A LISP machine in your browser: a Nerves-style minimal Linux whose PID 1 is
+Scheme as PID 1 of a browser Linux: a Nerves-style minimal Linux whose PID 1 is
 [Gauche Scheme](https://practical-scheme.net/gauche/), booted entirely inside
 a WebAssembly x86 emulator.
 

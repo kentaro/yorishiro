@@ -258,7 +258,7 @@ export function MachineConsole(): ReactNode {
         <h1 className="wordmark">
           yorishiro <span className="kanji">依代</span>
         </h1>
-        <p className="tagline">a LISP machine in your browser</p>
+        <p className="tagline">Scheme as PID 1 of a real Linux, in your browser</p>
         <Link className="nav-link" href="/how">
           how it works ↗
         </Link>

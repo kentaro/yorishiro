@@ -34,7 +34,7 @@
 
   <!-- tagline -->
   <text x="98" y="322" font-family="ui-monospace,'SF Mono',Menlo,monospace"
-        font-size="34" fill="#908da0">a LISP machine in your browser</text>
+        font-size="30" fill="#908da0">Scheme as PID 1 of a real Linux, in your browser</text>
 
   <rect x="98" y="360" width="150" height="3" rx="1.5" fill="url(#rule)"/>
 

@@ -338,10 +338,11 @@ export const EXAMPLES: readonly Example[] = [
     id: "quine",
     category: "tricks",
     title: "A quine",
-    blurb: "A program that prints its own source. The machine contemplates itself.",
+    blurb:
+      "Evaluates to a copy of its own source. The machine reproduces itself.",
     code:
-      "((lambda (s) (print s) (write s) (newline))\n" +
-      '  "((lambda (s) (print s) (write s) (newline))  ")',
+      "((lambda (x) (list x (list (quote quote) x)))\n" +
+      " (quote (lambda (x) (list x (list (quote quote) x)))))",
   },
   {
     id: "ackermann",

@@ -2,7 +2,7 @@
 
 ## What this is
 
-Browser-based LISP machine: Buildroot-built minimal Linux with Gauche Scheme
+Browser-based Linux with Gauche Scheme as PID 1: Buildroot-built minimal Linux with Gauche Scheme
 as PID 1, booted in a Wasm x86 emulator on a web page. Nerves-style
 construction, language swapped to Scheme.
 

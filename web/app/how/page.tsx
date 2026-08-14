@@ -5,7 +5,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "yorishiro — how it works",
   description:
-    "The construction of a browser LISP machine: Buildroot, Gauche as " +
+    "The construction of a browser Linux with Gauche Scheme as PID 1: Buildroot, Gauche as " +
     "PID 1, the v86 Wasm emulator, and a serial-port MIDI jack — plus a " +
     "tutorial for programming the machine.",
 };

@@ -8,10 +8,10 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://yorishiro.lolipop-now.app"),
-  title: "yorishiro — a LISP machine in your browser",
+  title: "yorishiro — Scheme as PID 1 of a browser Linux",
   description: DESCRIPTION,
   openGraph: {
-    title: "yorishiro 依代 — a LISP machine in your browser",
+    title: "yorishiro 依代 — Scheme as PID 1 of a browser Linux",
     description: DESCRIPTION,
     url: "/",
     siteName: "yorishiro",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "yorishiro 依代 — a LISP machine in your browser",
+    title: "yorishiro 依代 — Scheme as PID 1 of a browser Linux",
     description: DESCRIPTION,
     images: ["/og.png"],
   },
